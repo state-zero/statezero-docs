@@ -1,0 +1,1 @@
+import{_ as i,c as a,o as n,ae as t}from"./chunks/framework.U1Gow_7P.js";const o=JSON.parse('{"title":"Search Guide","description":"","frontmatter":{},"headers":[],"relativePath":"search.md","filePath":"search.md"}'),h={name:"search.md"};function e(l,s,p,k,r,d){return n(),a("div",null,s[0]||(s[0]=[t("",76)]))}const g=i(h,[["render",e]]);export{o as __pageData,g as default};

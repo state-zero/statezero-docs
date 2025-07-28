@@ -660,5 +660,5 @@ Congratulations! You've successfully set up StateZero with Django and Vue. You n
 
 1. **[Understanding Permissions](/permissions)** - Learn how to secure your data with Django-style permissions before building your UI
 2. **[ORM Documentation](/orm)** - Master StateZero's Django-like ORM for powerful frontend data management
-3. **[Build a UI with Bolt.dev](/building-with-bolt)** - Generate a beautiful frontend using AI and connect it to your StateZero backend
+3. **[Build a UI with Bolt.dev](/bolt-new-quickstart)** - Generate a beautiful frontend using AI and connect it to your StateZero backend
 4. **Explore Advanced Features** - Custom querysets, F expressions, file uploads, and more

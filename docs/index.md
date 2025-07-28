@@ -12,7 +12,7 @@ hero:
       link: /getting-started
     - theme: alt
       text: View on GitHub
-      link: https://github.com/your-org/StateZero
+      link: https://github.com/state-zero/statezero
 
 features:
   - title: 🚀 Perfect for AI-Generated Apps
