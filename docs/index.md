@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "StateZero"
-  text: "Your Django data, instantly live in your frontend"
-  tagline: "Keep your decoupled SPA architecture. Eliminate the friction. Your frontend becomes a reactive thin client of your Django backend."
+  text: "Build features, not plumbing"
+  tagline: "Turn your existing backend into a live, reactive data source. Ship modern UIs in hours, not weeks."
   actions:
     - theme: brand
       text: Quick Start Guide
@@ -15,191 +15,228 @@ hero:
       link: https://github.com/state-zero/statezero
 
 features:
-  - title: 🚀 Perfect for AI-Generated Apps
-    details: Bolt.dev creates your frontend? ChatGPT builds your UI? StateZero connects them to your Django backend with zero boilerplate code.
+  - title: 🚀 Ship UIs Fast
+    details: Got an existing backend? Add beautiful, modern frontends without building APIs or managing state. Your data just works.
   
-  - title: 🔄 True Full-Stack Models
-    details: Write Django models once. Use them identically in JavaScript. Same syntax, same permissions, same security - but live and reactive.
+  - title: ⚡ Everything Feels Instant
+    details: Every click, every update feels immediate. Users see changes instantly while your backend validates in the background.
   
-  - title: ⚡ State Management? What State Management?
-    details: No Redux. No Vuex. No manual synchronization. Your frontend becomes a reactive view of your Django database.
+  - title: 🎯 Focus on Features, Not Infrastructure
+    details: Stop writing APIs, managing caches, handling WebSockets. Just declare what data you need and build your UI.
   
-  - title: 🎯 Optimistic Everything
-    details: Every action feels instant. Create, update, delete - users see changes immediately while the backend confirms in the background.
+  - title: 🤖 Perfect for AI-Generated UIs
+    details: Bolt.dev, v0, Cursor built you a beautiful frontend? Connect it to your backend in minutes, not days.
   
-  - title: 📱 Legacy App Renaissance
-    details: Transform your existing Django apps without rewrites. Add modern real-time frontends to battle-tested backends.
+  - title: 🔄 Real-time by Default
+    details: Multiplayer collaboration, live dashboards, instant notifications. Real-time feels like magic, not work.
   
-  - title: 🔐 Security-First Architecture
-    details: Built on Django REST Framework's bombproof security. Authentication, authorization, and session management handled by battle-tested DRF. Sits happily alongside your existing DRF views.
+  - title: 🛡️ Your Backend, Your Rules
+    details: Keep your existing authentication, permissions, and business logic. StateZero works with what you have.
 
 ---
 
-## What is StateZero?
+## Stop Fighting Your Tools. Start Building Features.
 
-StateZero transforms your Django backend into a declarative, reactive data source for fully decoupled SPA frontends.
+You have a working backend. You want to add a modern, responsive frontend. 
 
-You keep your clean separation of concerns - Django handles business logic, your SPA handles presentation. But StateZero eliminates all the friction: no APIs to build, no state to manage, no synchronization code. Your frontend becomes a reactive thin client that stays perfectly in sync with your Django data.
+**The old way:** Spend weeks building REST APIs, setting up state management, handling real-time updates, debugging sync issues.
 
-### The Architecture You Want, Without the Pain
+**StateZero:** Your backend data just works in your frontend. Focus on the UI your users will love.
 
-**You get the best of both worlds:**
-- ✅ **Fully decoupled SPA** - Deploy frontend and backend independently
-- ✅ **Clean separation** - Business logic stays in Django, UI logic in your SPA  
-- ✅ **Zero friction** - No REST APIs, no state management, no sync complexity
-- ✅ **Real-time by default** - Changes propagate instantly across all clients
+### The Problem: Modern UIs Require Complex Infrastructure
 
-### The Old Way vs StateZero
+Users expect apps that feel instant and stay in sync. But implementing this is a nightmare:
 
-**Traditional Decoupled Django + SPA:**
 ```javascript
-// Traditional: All the ceremony of decoupled architecture
-const [products, setProducts] = useState([]);
+// Basic CRUD is just the beginning...
+const [users, setUsers] = useState([]);
 const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
 
+// Fetch data
 useEffect(() => {
-  fetch('/api/products/')
+  fetch('/api/users/')
+    .then(handleErrors)
     .then(r => r.json())
     .then(data => {
-      setProducts(data);
+      setUsers(data);
       setLoading(false);
-    });
+    })
+    .catch(err => setError(err));
 }, []);
 
-const createProduct = async (data) => {
-  const response = await fetch('/api/products/', {
-    method: 'POST',
-    body: JSON.stringify(data)
-  });
-  const newProduct = await response.json();
-  setProducts([...products, newProduct]); // Manual sync hell
-};
-```
-
-**StateZero - Decoupled but Frictionless:**
-```javascript
-// StateZero: Decoupled SPA, zero friction
-import { useQueryset } from '@statezero/core/vue';
-import { Product } from './models';
-
-const products = useQueryset(() => Product.objects.all()); // Live, reactive, always current
-const newProduct = Product.objects.create(data); // Instantly visible everywhere
-```
-
-**The difference is profound.** You maintain proper separation - your Django backend handles all business logic, validation, and permissions. Your frontend remains a pure presentation layer. But StateZero eliminates the integration complexity that usually makes decoupled architectures painful.
-
-### Your Frontend: A Reactive Thin Client
-
-Think of your SPA as a reactive window into your Django database:
-
-```javascript
-// Your frontend becomes a declarative view of backend state
-const activeOrders = useQueryset(() => Order.objects.filter({ 
-  status: 'active',
-  customer__premium: true 
-}));
-
-// Business logic stays in Django - your frontend just declares what it needs
-const customerOrders = useQueryset(() => Order.objects.filter({
-  customer: user.id,
-  created_at__gte: lastMonth
-}).orderBy('-created_at'));
-```
-
-Your Django backend remains authoritative:
-```python
-# All business logic, validation, and permissions stay in Django
-class OrderPermission(AbstractPermission):
-    def filter_queryset(self, request, queryset):
-        return queryset.filter(customer=request.user)
+// Optimistic updates (so UI feels instant)
+const createUser = async (userData) => {
+  const optimisticUser = { ...userData, id: Date.now() }; // Fake ID
+  setUsers(prev => [...prev, optimisticUser]); // Show immediately
+  
+  try {
+    const response = await fetch('/api/users/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    });
+    const realUser = await response.json();
     
-    def visible_fields(self, request, model):
-        if request.user.is_staff:
-            return {"id", "total", "customer", "internal_notes"}
-        return {"id", "total", "status"}
+    // Replace optimistic user with real one
+    setUsers(prev => prev.map(u => 
+      u.id === optimisticUser.id ? realUser : u
+    ));
+  } catch (err) {
+    // Remove optimistic user on failure
+    setUsers(prev => prev.filter(u => u.id !== optimisticUser.id));
+    setError(err);
+  }
+};
 
-class Order(models.Model):
-    # Your models define the contract
-    def clean(self):
-        if self.total < 0:
-            raise ValidationError("Order total cannot be negative")
+// Real-time updates (so everyone stays in sync)
+useEffect(() => {
+  const ws = new WebSocket('ws://localhost:8000/users/');
+  
+  ws.onmessage = (event) => {
+    const { type, user } = JSON.parse(event.data);
+    
+    if (type === 'user_created') {
+      setUsers(prev => {
+        // Don't duplicate if we created optimistically
+        if (prev.find(u => u.id === user.id)) return prev;
+        return [...prev, user];
+      });
+    } else if (type === 'user_updated') {
+      setUsers(prev => prev.map(u => u.id === user.id ? user : u));
+    } else if (type === 'user_deleted') {
+      setUsers(prev => prev.filter(u => u.id !== user.id));
+    }
+  };
+  
+  return () => ws.close();
+}, []);
+
+// And you still need:
+// - Conflict resolution for simultaneous edits
+// - Retry logic for failed optimistic updates  
+// - Cache invalidation across components
+// - Connection state handling
 ```
 
-### Revolutionary for AI-Generated Frontends
+**You wrote 100+ lines of complex infrastructure code and haven't built a single feature yet.**
 
-AI tools like Bolt.dev, v0, and Claude excel at generating beautiful SPAs, but connecting them to Django backends traditionally requires building REST APIs and managing complex state synchronization.
+**The cruel irony:** Users expect instant, collaborative experiences, but implementing them properly takes months and is incredibly error-prone.
 
-**With StateZero, AI-generated SPAs work with Django immediately:**
+### The Solution: Modern App Feel, Zero Infrastructure
 
 ```javascript
-// AI generates this SPA code - it just works with your existing Django models
+// With StateZero, modern app experiences become this simple:
+import { useQueryset } from '@statezero/core/vue';
+import { User } from './models';
+
+const users = useQueryset(() => User.objects.all()); // Live, reactive, always current
+const newUser = User.objects.create(userData); // Instantly visible everywhere
+
+// That's it. You get:
+// ✅ Optimistic updates - UI feels instant on every action
+// ✅ Real-time sync - Changes from other users appear automatically  
+// ✅ Conflict resolution - Simultaneous edits handled gracefully
+// ✅ Error handling - Failed operations auto-revert with user feedback
+
+// 2 lines instead of 100+. Build your UI.
+```
+
+### Your Existing Backend, Supercharged
+
+```python
+# Keep your existing Django models exactly as they are
+class User(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    is_active = models.BooleanField(default=True)
+    
+    def clean(self):
+        # Your business logic stays put
+        if User.objects.filter(email=self.email).exists():
+            raise ValidationError("Email already exists")
+
+# Keep your existing permissions
+class UserPermission(AbstractPermission):
+    def filter_queryset(self, request, queryset):
+        if request.user.is_staff:
+            return queryset
+        return queryset.filter(created_by=request.user)
+```
+
+```javascript
+// Use them directly in your frontend - same syntax, same security
+const activeUsers = useQueryset(() => User.objects.filter({ is_active: true }));
+const myUsers = useQueryset(() => User.objects.filter({ created_by: currentUser.id }));
+
+// Your permissions automatically apply
+// Your validation automatically works
+// Changes sync automatically everywhere
+```
+
+### Perfect for Teams Who Want to Move Fast
+
+**Building with AI tools?** Bolt.dev, v0, and Cursor create beautiful frontends, but connecting them to your backend usually means:
+- Building REST endpoints
+- Managing authentication 
+- Handling state synchronization
+- Setting up real-time updates
+
+**StateZero eliminates all of that.** Your AI-generated frontend just works with your existing backend.
+
+```jsx
+// AI generates this React component
 const Dashboard = () => {
-  const activeOrders = useQueryset(() => Order.objects.filter({ 
-    status: 'active',
-    customer__premium: true 
+  const orders = useQueryset(() => Order.objects.filter({ 
+    status: 'pending',
+    created_at__gte: lastWeek 
   }));
   
   return (
     <div>
-      {activeOrders.map(order => (
-        <OrderCard key={order.pk} order={order} />
+      {orders.map(order => (
+        <OrderCard key={order.id} order={order} />
       ))}
     </div>
   );
 };
+
+// It immediately works with your Django backend
+// No API endpoints needed
+// No state management required
+// Real-time updates included
 ```
 
-The AI doesn't need to understand your backend - it just uses your Django models like any other JavaScript library. Your Django permissions and business logic automatically apply.
+### Modernize Legacy Apps Without Risk
 
-### Transform Legacy Django Apps Into Modern SPAs
+**Got a Django app that's been running for years?** StateZero gives you a migration path to modern SPAs without the usual rewrite:
 
-Got a Django app built over years? StateZero gives you a migration path to modern SPA architecture without the usual rewrite:
+- ✅ **Zero backend changes** - Your models, views, and business logic stay identical
+- ✅ **Progressive enhancement** - Add modern frontends page by page
+- ✅ **Keep what works** - Your existing admin, APIs, and workflows continue unchanged
+- ✅ **Deploy independently** - Frontend and backend remain fully decoupled
 
-- **Keep your existing models** - no changes needed to your Django backend
-- **Add SPA frontends progressively** - page by page, component by component  
-- **Preserve all business logic** - validation, permissions, and workflows stay in Django
-- **Zero migration risk** - your backend remains unchanged and fully functional
-
-### Live Demo: Decoupled but Synchronized
+### See It In Action
 
 ```python
-# Your Django backend - unchanged, authoritative
+# Your existing Django backend (unchanged)
 class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     in_stock = models.BooleanField(default=True)
-    
-    def clean(self):
-        if self.price < 0:
-            raise ValidationError("Price cannot be negative")
-```
-
-```javascript
-// Your SPA frontend - thin, reactive client
-import { useQueryset } from '@statezero/core/vue';
-import { Product } from './models';
-
-const products = useQueryset(() => Product.objects.filter({ in_stock: true }));
-
-// User A creates a product (validation happens in Django)
-const newProduct = Product.objects.create({
-  name: "iPhone 16",
-  price: 999.99,
-  in_stock: true
-});
-
-// User B's SPA updates instantly - no API calls, no manual sync
-// The products queryset automatically includes newProduct
 ```
 
 ```vue
-<!-- Real-time reactive SPA component -->
+<!-- Your new Vue frontend -->
 <template>
-  <div v-for="product in products" :key="product.pk">
-    {{ product.name }} - ${{ product.price }}
-    <button @click="toggleStock(product)">
-      {{ product.in_stock ? 'In Stock' : 'Out of Stock' }}
-    </button>
+  <div class="product-grid">
+    <div v-for="product in products" :key="product.id" class="product-card">
+      <h3>{{ product.name }}</h3>
+      <p>${{ product.price }}</p>
+      <button @click="toggleStock(product)">
+        {{ product.in_stock ? 'In Stock' : 'Out of Stock' }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -207,41 +244,88 @@ const newProduct = Product.objects.create({
 import { useQueryset } from '@statezero/core/vue';
 import { Product } from './models';
 
-// Reactive thin client - declares what it needs, stays in sync automatically
-const products = useQueryset(() => Product.objects.all());
+// This is all the JavaScript you write
+const products = useQueryset(() => Product.objects.filter({ in_stock: true }));
 
 const toggleStock = (product) => {
-  // Optimistic update in SPA - Django validates and confirms
   product.in_stock = !product.in_stock;
-  product.save();
+  product.save(); // Validates in Django, updates everywhere instantly
 };
 </script>
 ```
 
-### How It Works
+**When someone else updates a product, your UI updates automatically. When you create a product, everyone else sees it instantly. No WebSocket code. No manual synchronization. It just works.**
 
-1. **Your Django backend stays unchanged** - models, permissions, business logic intact
-2. **Run one command** - StateZero generates reactive JavaScript models that mirror your Django schema
-3. **Build your SPA** - use familiar Django query syntax, but reactive and real-time
-4. **Deploy independently** - your SPA and Django backend remain fully decoupled
+### Real-Time Collaboration Without the Complexity
 
-You get clean architectural separation with zero integration friction.
+**The modern app standard:** Users expect Google Docs-style collaboration everywhere. Changes from other users should appear instantly, your actions should feel immediate, and everything should stay in sync.
+
+**The traditional nightmare:** Implementing this requires WebSockets, optimistic updates, conflict resolution, connection state management, message queuing, and countless edge cases.
+
+**With StateZero:** You get enterprise-grade real-time collaboration automatically.
+
+```vue
+<!-- Multiple users editing the same data -->
+<template>
+  <div v-for="task in tasks" :key="task.id">
+    <input 
+      v-model="task.title" 
+      @input="task.save()"
+      :class="{ 'being-edited': task.isBeingEditedByOthers }"
+    />
+    <span v-if="task.lastEditedBy">
+      Last edited by {{ task.lastEditedBy.name }}
+    </span>
+  </div>
+</template>
+
+<script setup>
+import { useQueryset } from '@statezero/core/vue';
+import { Task } from './models';
+
+// This component automatically:
+// - Shows changes from other users instantly
+// - Handles optimistic updates for snappy UX  
+// - Resolves conflicts when users edit simultaneously
+
+const tasks = useQueryset(() => Task.objects.filter({ project: currentProject.id }));
+</script>
+```
+
+**No WebSocket code. No optimistic update logic. No conflict resolution. Real-time collaboration just works.**
 
 ### Framework Support
 
 - **Vue.js** - Native reactive integration ✅
-- **Vanilla JavaScript** - Works with any SPA framework ✅
+- **Vanilla JavaScript** - Works with any framework ✅
 - **React** - Hook-based integration (coming soon) 🚧
 - **Svelte** - Native store integration (coming soon) 🚧
 
-### The Best of Both Worlds
+### Your Architecture Stays Clean
 
-Stop choosing between clean architecture and development velocity.
+StateZero doesn't blur boundaries or create coupling. It creates a clean **declarative data layer** that sits between your frontend and backend:
 
-Build properly decoupled SPAs with the Django knowledge you already have. Keep your separation of concerns. Eliminate the friction.
+- **Backend:** Business logic, validation, permissions (unchanged)
+- **StateZero:** Self-managing reactive state layer
+- **Frontend:** Pure presentation and user interaction
 
-Your frontend becomes a reactive thin client of your Django data - exactly the architecture you want, without the pain you don't.
+Deploy them independently. Scale them separately. Your architecture stays proper.
 
-**[→ Transform your first Django app in 15 minutes](/getting-started)**
+### Get Started in Minutes
+
+1. **Add StateZero to your existing Django project** (5 minutes)
+2. **Generate frontend models from your Django models** (1 command)
+3. **Build your UI using familiar syntax** (just like Django views, but in JavaScript)
+4. **Deploy independently** (your frontend and backend stay decoupled)
+
+**[→ Transform your first app in 15 minutes](/getting-started)**
 
 ---
+
+## Ready to Ship Features Instead of Infrastructure?
+
+Stop spending weeks on plumbing. Start building the features your users actually want.
+
+Your backend works. Your data is solid. Now make it feel magical in the frontend.
+
+**StateZero: Build features, not plumbing.**
