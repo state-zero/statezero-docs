@@ -28,6 +28,7 @@ export default defineConfig({
           { text: "Permissions", link: "/permissions" },
           { text: "Custom Querysets", link: "/custom-querysets" },
           { text: "Live Querysets", link: "/live-querysets" },
+          { text: "Actions", link: "/actions"}
         ],
       },
       {

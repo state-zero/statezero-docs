@@ -135,7 +135,7 @@ pusher: {
 In Bolt.new's terminal, run:
 
 ```bash
-npx statezero sync-models
+npx statezero sync
 ```
 
 Select your models (including the `Note` model) and hit enter. This generates TypeScript models that mirror your Django models.
@@ -195,7 +195,7 @@ If your app needs file uploads during local development, configure Django storag
 **Models not syncing:**
 - Make sure your Django backend is accessible via the tunnel URL
 - Check that models are properly registered in `crud.py`
-- Try running `npx statezero sync-models` again
+- Try running `npx statezero sync` again
 
 **Real-time updates not working:**
 - Verify Pusher credentials in both Django settings and `statezero.config.js`

@@ -56,6 +56,7 @@ const config = {
     default: {
       API_URL: 'http://localhost:8000/api/',
       GENERATED_TYPES_DIR: './src/models',
+      GENERATED_ACTIONS_DIR: "./src/actions/",
       fileUploadMode: 's3', // or 'server'
       // fileRootURL not needed when using S3 storage - URLs come from storage backend
       getAuthHeaders: () => ({

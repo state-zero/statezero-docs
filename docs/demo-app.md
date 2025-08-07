@@ -518,6 +518,7 @@ export default {
     default: {
       API_URL: BASE_URL,
       GENERATED_TYPES_DIR: "./src/models/",
+      GENERATED_ACTIONS_DIR: "./src/actions/",
       fileUploadMode: "server",
       BACKEND_TZ: "UTC",
       events: {
@@ -569,7 +570,7 @@ That's all the configuration completed.
 Make sure your StateZero Django backend is running, and in your frontend command prompt run:
 
 ```bash
-npx statezero sync-models
+npx statezero sync
 ```
 
 We see a list of our models preselected:

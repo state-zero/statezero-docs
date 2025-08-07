@@ -193,6 +193,7 @@ export default {
     default: {
       API_URL: `${BASE_URL}/statezero`,
       GENERATED_TYPES_DIR: "./src/models/",
+      GENERATED_ACTIONS_DIR: "./src/actions/",
       fileRootURL: BASE_URL,
       fileUploadMode: "server",
       BACKEND_TZ: "UTC",
@@ -239,7 +240,7 @@ setupStateZero(config, getModelClass, {
 With your Django server running:
 
 ```bash
-npx statezero sync-models
+npx statezero sync
 ```
 
 Select your models and hit enter. This generates TypeScript models that mirror your Django models.
